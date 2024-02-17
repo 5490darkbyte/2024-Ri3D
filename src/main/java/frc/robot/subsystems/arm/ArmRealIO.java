@@ -1,13 +1,12 @@
 package frc.robot.subsystems.arm;
 
-import static frc.robot.Constants.*;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
-import com.revrobotics.SparkAbsoluteEncoder;
 
 /** Add your docs here. */
 public class ArmRealIO implements ArmIO {
@@ -18,7 +17,7 @@ public class ArmRealIO implements ArmIO {
         private CANSparkMax armMotor_l;
         private CANSparkMax armMotor_r;
         private SparkPIDController armPIDController;
-        private SparkAbsoluteEncoder armAbsoluteEncoder;
+        private CANcoder armAbsoluteEncoder;
 
         public ArmRealIO(int IDleftMotor, int IDrightMotor) {
             armMotor_l = new CANSparkMax(IDleftMotor, MotorType.kBrushless);
@@ -32,21 +31,27 @@ public class ArmRealIO implements ArmIO {
 
             armPIDController = armMotor_r.getPIDController();
 
-            armAbsoluteEncoder = armMotor_r.getAbsoluteEncoder(Type.kDutyCycle);
+            armAbsoluteEncoder = new CANcoder(0); //Need to input proper device ID here
 
             armMotor_l.follow(armMotor_r, true);
 
+
+            CANcoderConfiguration CANconfig = new CANcoderConfiguration();
+            armAbsoluteEncoder.getConfigurator().apply(CANconfig);
+
+            /*
             armAbsoluteEncoder.setInverted(true);
             armAbsoluteEncoder.setPositionConversionFactor(Math.PI*2);
             armAbsoluteEncoder.setVelocityConversionFactor(Math.PI*2/60);
 
             armAbsoluteEncoder.setZeroOffset(ARM_Offset);
+            */
             
             armPIDController.setP(0.4);
             armPIDController.setI(0.0);
             armPIDController.setD(0.00001);
 
-            armPIDController.setFeedbackDevice(armAbsoluteEncoder);
+            //armPIDController.setFeedbackDevice(armAbsoluteEncoder);
             armPIDController.setOutputRange(-1.00, 1.00);   
             
             armMotor_r.setSmartCurrentLimit(80);
@@ -57,8 +62,8 @@ public class ArmRealIO implements ArmIO {
         public void updateInputs(ArmIOInputs inputs) {
             inputs.isBrake = isBrake;
             inputs.curent = armMotor_r.getOutputCurrent()+ armMotor_l.getOutputCurrent();
-            inputs.curentAngle = armAbsoluteEncoder.getPosition();
-            inputs.velocity = armAbsoluteEncoder.getVelocity();
+            inputs.curentAngle = armAbsoluteEncoder.getAbsolutePosition().getValueAsDouble(); //or should this be getPosition()?
+            inputs.velocity = armAbsoluteEncoder.getVelocity().getValueAsDouble();
             inputs.targetAngle = targetAngle;
             inputs.appliedPower = armMotor_r.getAppliedOutput();
             inputs.relativePos_l = armMotor_l.getEncoder().getPosition();
