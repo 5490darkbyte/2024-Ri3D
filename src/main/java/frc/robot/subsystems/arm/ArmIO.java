@@ -7,8 +7,8 @@ public interface ArmIO {
     @AutoLog
     class ArmIOInputs{
         public boolean isBrake;
-        public double curent;
-        public double curentAngle;
+        public double current;
+        public double currentAngle;
         public double velocity;
         public double targetAngle;
         public double appliedPower;

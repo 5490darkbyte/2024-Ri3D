@@ -4,9 +4,8 @@ package frc.robot.subsystems.arm;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import edu.wpi.first.math.controller.PIDController;
 
 /** Add your docs here. */
 public class ArmRealIO implements ArmIO {
@@ -16,8 +15,8 @@ public class ArmRealIO implements ArmIO {
 
         private CANSparkMax armMotor_l;
         private CANSparkMax armMotor_r;
-        private SparkPIDController armPIDController;
-        private CANcoder armAbsoluteEncoder;
+        private PIDController armPIDController;
+        private CANcoder cancoder;
 
         public ArmRealIO(int IDleftMotor, int IDrightMotor) {
             armMotor_l = new CANSparkMax(IDleftMotor, MotorType.kBrushless);
@@ -29,30 +28,20 @@ public class ArmRealIO implements ArmIO {
 
             armMotor_r.setInverted(true);
 
-            armPIDController = armMotor_r.getPIDController();
-
-            armAbsoluteEncoder = new CANcoder(0); //Need to input proper device ID here
+            armPIDController = new PIDController(0.4,0.0,0.00001);
 
             armMotor_l.follow(armMotor_r, true);
-
-
-            CANcoderConfiguration CANconfig = new CANcoderConfiguration();
-            armAbsoluteEncoder.getConfigurator().apply(CANconfig);
 
             /*
             armAbsoluteEncoder.setInverted(true);
             armAbsoluteEncoder.setPositionConversionFactor(Math.PI*2);
             armAbsoluteEncoder.setVelocityConversionFactor(Math.PI*2/60);
-
-            armAbsoluteEncoder.setZeroOffset(ARM_Offset);
             */
-            
-            armPIDController.setP(0.4);
-            armPIDController.setI(0.0);
-            armPIDController.setD(0.00001);
 
-            //armPIDController.setFeedbackDevice(armAbsoluteEncoder);
-            armPIDController.setOutputRange(-1.00, 1.00);   
+            cancoder = new CANcoder(0); //Need to input proper device ID here
+            CANcoderConfiguration CANconfig = new CANcoderConfiguration();
+            cancoder.getConfigurator().apply(CANconfig);
+        
             
             armMotor_r.setSmartCurrentLimit(80);
             armMotor_l.setSmartCurrentLimit(80);
@@ -61,9 +50,9 @@ public class ArmRealIO implements ArmIO {
 
         public void updateInputs(ArmIOInputs inputs) {
             inputs.isBrake = isBrake;
-            inputs.curent = armMotor_r.getOutputCurrent()+ armMotor_l.getOutputCurrent();
-            inputs.curentAngle = armAbsoluteEncoder.getAbsolutePosition().getValueAsDouble(); //or should this be getPosition()?
-            inputs.velocity = armAbsoluteEncoder.getVelocity().getValueAsDouble();
+            inputs.current = armMotor_r.getOutputCurrent()+ armMotor_l.getOutputCurrent();
+            inputs.currentAngle = cancoder.getAbsolutePosition().getValueAsDouble(); //or should this be getPosition()?
+            inputs.velocity = cancoder.getVelocity().getValueAsDouble();
             inputs.targetAngle = targetAngle;
             inputs.appliedPower = armMotor_r.getAppliedOutput();
             inputs.relativePos_l = armMotor_l.getEncoder().getPosition();
@@ -80,8 +69,7 @@ public class ArmRealIO implements ArmIO {
         }
 
         public void setAngle(double angle) {
-            targetAngle = angle;
-            armPIDController.setReference(angle, ControlType.kPosition);
+            armMotor_r.set(armPIDController.calculate(cancoder.getAbsolutePosition().getValueAsDouble(), angle)); //or should this be getPosition()?
         }
 
 }
