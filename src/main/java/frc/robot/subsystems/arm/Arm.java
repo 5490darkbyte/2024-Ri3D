@@ -30,9 +30,9 @@ public class Arm extends SubsystemBase {
 
     if (this.getCurrentCommand() != null) {
 
-      Logger.recordOutput("Arm/CurentCommand", this.getCurrentCommand().getName());
+      Logger.recordOutput("Arm/CurrentCommand", this.getCurrentCommand().getName());
     } else {
-      Logger.recordOutput("Arm/CurentCommand", "none");
+      Logger.recordOutput("Arm/CurrentCommand", "none");
     }
   }
 
@@ -72,6 +72,6 @@ public class Arm extends SubsystemBase {
   }
 
   public double getAngle() {
-    return inputs.curentAngle;
+    return inputs.currentAngle;
   }
 }

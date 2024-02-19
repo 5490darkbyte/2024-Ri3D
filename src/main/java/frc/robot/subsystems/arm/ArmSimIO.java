@@ -12,8 +12,8 @@ public class ArmSimIO implements ArmIO {
 
         public void updateInputs(ArmIOInputs inputs) {
             inputs.isBrake = isBrake;
-            inputs.curent = 0;
-            inputs.curentAngle = 0;
+            inputs.current = 0;
+            inputs.currentAngle = 0;
             inputs.velocity = 0;
             inputs.targetAngle = targetAngle;
         }
