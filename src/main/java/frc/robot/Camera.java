@@ -1,6 +1,5 @@
 package frc.robot;
 
-
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -11,14 +10,20 @@ import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.first.apriltag.AprilTagDetection;
 import edu.wpi.first.apriltag.AprilTagDetector;
+import edu.wpi.first.apriltag.AprilTagPoseEstimator;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSink;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.networktables.IntegerArrayPublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 public class Camera{
 
@@ -26,12 +31,15 @@ public class Camera{
   String cameraName;
   VideoSink server;
 
+
+
   public Camera() {
     setupCameraStream();  
-    Thread visionThread = new Thread(() -> apriltagVisionThreadProc());
+    var visionThread = new Thread(this::apriltagVisionThreadProc);
     visionThread.setDaemon(true);
     visionThread.start();
   }
+
 
   public void setupCameraStream() {
     // Get the UsbCamera from CameraServer
@@ -53,23 +61,36 @@ public class Camera{
                 .withPosition(0, 0);
   }
 
+  
 
   public void apriltagVisionThreadProc() {
-    AprilTagDetector detector = new AprilTagDetector();
-    detector.addFamily("tag16h5", 0);
-  
+     var detector = new AprilTagDetector();
+    // look for tag36h11, correct 3 error bits
+    detector.addFamily("tag36h11", 3);
+
+    // Set up Pose Estimator - parameters are for a Microsoft Lifecam HD-3000
+    // (https://www.chiefdelphi.com/t/wpilib-apriltagdetector-sample-code/421411/21)
+    var poseEstConfig =
+        new AprilTagPoseEstimator.Config(
+            0.1651, 699.3778103158814, 677.7161226393544, 345.6059345433618, 207.12741326228522);
+    var estimator = new AprilTagPoseEstimator(poseEstConfig);
+
     // Get a CvSink. This will capture Mats from the camera
     CvSink cvSink = CameraServer.getVideo();
     // Setup a CvSource. This will send images back to the Dashboard
-    CvSource outputStream = CameraServer.putVideo("detect", 640, 480);
+    CvSource outputStream = CameraServer.putVideo("Detected", 640, 480);
 
-    // Mats are very memory expensive. Lets reuse this Mat.
-    Mat mat = new Mat();
-    ArrayList<Integer> tags = new ArrayList<>();
+    // Mats are very memory expensive. Lets reuse these.
+    var mat = new Mat();
 
-    //
-    Scalar outlineColor = new Scalar(0, 255, 0);
-    Scalar xColor = new Scalar(0, 0, 255);
+    // Instantiate once
+    ArrayList<Long> tags = new ArrayList<>();
+    var outlineColor = new Scalar(0, 255, 0);
+    var crossColor = new Scalar(0, 0, 255);
+
+    // We'll output to NT
+    NetworkTable tagsTable = NetworkTableInstance.getDefault().getTable("apriltags");
+    IntegerArrayPublisher pubTags = tagsTable.getIntegerArrayTopic("tags").publish();
 
     // This cannot be 'true'. The program will never exit if it is. This
     // lets the robot stop this thread when restarting robot code or deploying.
@@ -84,10 +105,15 @@ public class Camera{
       }
 
       AprilTagDetection[] detections = detector.detect(mat);
-      tags.clear();
-      for (AprilTagDetection detection : detections) {
-        tags.add(detection.getId());
 
+      // have not seen any tags yet
+      tags.clear();
+
+      for (AprilTagDetection detection : detections) {
+        // remember we saw this tag
+        tags.add((long) detection.getId());
+
+        // draw lines around the tag
         for (var i = 0; i <= 3; i++) {
           var j = (i + 1) % 4;
           var pt1 = new Point(detection.getCornerX(i), detection.getCornerY(i));
@@ -95,20 +121,35 @@ public class Camera{
           Imgproc.line(mat, pt1, pt2, outlineColor, 2);
         }
 
+        // mark the center of the tag
         var cx = detection.getCenterX();
         var cy = detection.getCenterY();
         var ll = 10;
-        Imgproc.line(mat, new Point(cx - ll, cy), new Point(cx + ll, cy), xColor, 2);
-        Imgproc.line(mat, new Point(cx, cy - ll), new Point(cx, cy + ll), xColor, 2);
-        Imgproc.putText(mat, Integer.toString(detection.getId()), new Point (cx + ll, cy), Imgproc.FONT_HERSHEY_SIMPLEX, 1, xColor, 3);
+        Imgproc.line(mat, new Point(cx - ll, cy), new Point(cx + ll, cy), crossColor, 2);
+        Imgproc.line(mat, new Point(cx, cy - ll), new Point(cx, cy + ll), crossColor, 2);
+
+        // identify the tag
+        Imgproc.putText(mat, Integer.toString(detection.getId()), new Point(cx + ll, cy),
+            Imgproc.FONT_HERSHEY_SIMPLEX, 1, crossColor, 3);
+
+        // determine pose
+        Transform3d pose = estimator.estimate(detection);
+
+        // put pose into dashboard
+        Rotation3d rot = pose.getRotation();
+        tagsTable.getEntry("pose_" + detection.getId()).setDoubleArray(new double[] {
+                  pose.getX(), pose.getY(), pose.getZ(), rot.getX(), rot.getY(), rot.getZ()
+                });
       }
 
-      SmartDashboard.putString("tag", tags.toString());
-      
+      // put list of tags onto dashboard
+      pubTags.set(tags.stream().mapToLong(Long::longValue).toArray());
+
       // Give the output stream a new image to display
       outputStream.putFrame(mat);
     }
 
+    pubTags.close();
     detector.close();
   }
 }
