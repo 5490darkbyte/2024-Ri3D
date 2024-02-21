@@ -27,6 +27,10 @@
   ],
   "java.test.defaultConfig": "WPIlibUnitTests",
   "cSpell.words": [
-    "cancoder"
+    "apriltag",
+    "cancoder",
+    "Imgproc",
+    "teleop",
+    "teleoperated"
   ]
 }
