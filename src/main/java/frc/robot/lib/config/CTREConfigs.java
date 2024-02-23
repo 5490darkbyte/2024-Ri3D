@@ -1,4 +1,4 @@
-package frc.lib.config;
+package frc.robot.lib.config;
 
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue; 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;

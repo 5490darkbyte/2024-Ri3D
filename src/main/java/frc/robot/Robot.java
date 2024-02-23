@@ -9,6 +9,8 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.utility.AdvantageKitHelper;
+import frc.robot.lib.config.CTREConfigs;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -20,8 +22,8 @@ import frc.robot.utility.AdvantageKitHelper;
  * project.
  */
 public class Robot extends LoggedRobot {
+  public static CTREConfigs ctreConfigs;
   private Command m_autonomousCommand;
-
   private RobotContainer m_robotContainer;
 
   /**
@@ -32,9 +34,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
     AdvantageKitHelper.setupLogger(true);
-
-    //logger.recordMetadata("RobotIdentity", );
-
     Logger.start();
     
     m_robotContainer = new RobotContainer();
@@ -79,7 +78,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     m_robotContainer.resetSubSystems();
-    m_robotContainer.driveTrainSubsystem.removeDefaultCommand();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -99,7 +97,6 @@ public class Robot extends LoggedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    m_robotContainer.driveTrainSubsystem.setDefaultCommand(m_robotContainer.defaultDriveCommand);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

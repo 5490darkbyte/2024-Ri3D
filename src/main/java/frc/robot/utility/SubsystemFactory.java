@@ -3,9 +3,6 @@ package frc.robot.utility;
 import static frc.robot.Constants.*;
 
 import frc.robot.Camera;
-import frc.robot.subsystems.drivetrain.DriveTrain;
-import frc.robot.subsystems.drivetrain.DriveTrainRealIO;
-import frc.robot.subsystems.drivetrain.DriveTrainSimIO;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeRealIO;
 import frc.robot.subsystems.intake.IntakeSimIO;
@@ -21,6 +18,7 @@ import frc.robot.subsystems.climber.ClimberSimIO;
 
 public final class SubsystemFactory {
 
+   /* 
     public static DriveTrain createDriveTrain(RobotIdentity identity) {
         switch (identity) {
             case SIMULATION:
@@ -33,6 +31,7 @@ public final class SubsystemFactory {
                 return new DriveTrain(new DriveTrainSimIO());
         }
     }
+    */
 
     public static Intake createIntake(RobotIdentity identity) {
         switch (identity) {
