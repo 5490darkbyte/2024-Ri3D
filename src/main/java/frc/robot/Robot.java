@@ -21,9 +21,11 @@ import frc.robot.utility.AdvantageKitHelper;
  * project.
  */
 public class Robot extends LoggedRobot {
+  //Declare autonomous command
   private Command m_autonomousCommand;
+  //Declare robot container variable
   private RobotContainer m_robotContainer;
-
+  //Declare STREConfige variable
   public static CTREConfigs ctreConfigs;
 
   /**
@@ -33,9 +35,11 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
+    //Create AdvantageKit Logging
     AdvantageKitHelper.setupLogger(true);
     Logger.start();
     
+    //Initialize robot container object
     m_robotContainer = new RobotContainer();
 
 
@@ -79,7 +83,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     m_robotContainer.resetSubSystems(); //turns off shooter
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(); //get selected autonomous command
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

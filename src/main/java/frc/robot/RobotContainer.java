@@ -28,7 +28,7 @@ import java.security.PublicKey;
 @SuppressWarnings("unused")
 public class RobotContainer {
 
-  // Creating Controllers
+  // Creating Xbox Controllers
   @SuppressWarnings({ "unused" })
   private final CommandXboxController driveController = new CommandXboxController(DRIVE_CONTROLLER_PORT);
   @SuppressWarnings({ "unused" })
@@ -38,16 +38,19 @@ public class RobotContainer {
 
   //public DriveTrain driveTrainSubsystem;
   private final Swerve s_Swerve = new Swerve(); //Create swerve drivetrain
+  //Declare Subsystem variables
   private Intake intakeSubsystem;
   private Shooter shooterSubsystem;
   private Arm armSubsystem;
   private Climber climberSubsystem;
-
+  //Declare autochooser for selecting autonomous code
   private AutoCommandChooser autoChooser;
 
+  //Declasre camera variable
   @SuppressWarnings("unused")
   private Camera camera;
 
+  //Declare sequential command groups
   //public DriveCommand defaultDriveCommand;
   //public TurboDriveCommand turboDriveCommand;
   private SequentialCommandGroup shootRing;
@@ -65,18 +68,20 @@ public class RobotContainer {
   private SequentialCommandGroup feedForward;
   
   
-
+  //Declare robot identity
   private RobotIdentity identity;
 
   public RobotContainer() {
+    //Initialize robot identity (real or simulation)
     identity = RobotIdentity.getIdentity();
 
-    createSubsystems(); // Create our subsystems
-    createCommands(); // Create our commands
+    createSubsystems(); // Initialize subsystems
+    createCommands(); // Initialize Command groups and add commands to them
     configureButtonBindings(); // Configure the button bindings
-    createAutoCommand();
+    createAutoCommand(); //Register autonomous commands and put the chooser in shuffleboard
   }
 
+  //Initialize subsystems
   private void createSubsystems() {
     //driveTrainSubsystem = SubsystemFactory.createDriveTrain(identity);
     climberSubsystem = SubsystemFactory.createClimber(identity);
@@ -86,6 +91,7 @@ public class RobotContainer {
     camera = SubsystemFactory.createCamera(identity);
   }
 
+  // Initialize Command groups and add commands to them
   private void createCommands() {
     /* 
     defaultDriveCommand = new DriveCommand(driveTrainSubsystem,
@@ -206,12 +212,12 @@ public class RobotContainer {
     driveController.povRight().onTrue(new InstantCommand(() -> armSubsystem.setPosition("LATCHAPROCH")));
   }
 
+  //Register autonomous commands and put the chooser in shuffleboard
   private void createAutoCommand(){
     autoChooser = new AutoCommandChooser();
 
     // Register all the supported auto commands
     autoChooser.registerDefaultCreator("Do Nothing", null);
-
     autoChooser.registerCreator("Drive Forward", () -> autoShootDrive);
     autoChooser.registerCreator("Amp Side Left (Blue)", () -> autoAmpBlue);
     autoChooser.registerCreator("Amp Side Right (Red)",() -> autoAmpRed);

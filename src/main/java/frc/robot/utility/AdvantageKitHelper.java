@@ -22,8 +22,7 @@ public class AdvantageKitHelper {
             Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
         }
 
-        // We don't add the NT4 receiver in competition matches to reduce network
-        // traffic.
+        // We don't add the NT4 receiver in competition matches to reduce network traffic.
         if (doNetworkLogging) {
             Logger.addDataReceiver(new NT4Publisher());
         }
