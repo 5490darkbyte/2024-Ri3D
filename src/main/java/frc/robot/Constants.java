@@ -177,4 +177,12 @@ public final class Constants {
             new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
     }
+
+     public static final class ArmConstants
+    {
+        public static final double ArmMaxDegrees = 283.0;
+        public static final double ArmMinDegrees = 35.0;
+        public static final int SmartCurrentLimit  = 80;
+    }
+
 }

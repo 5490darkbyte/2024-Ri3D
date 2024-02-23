@@ -37,8 +37,8 @@ public class RobotContainer {
   private final CommandXboxController testController = new CommandXboxController(TEST_CONTROLLER_PORT);
 
   //public DriveTrain driveTrainSubsystem;
-  private final Swerve s_Swerve = new Swerve(); //Create swerve drivetrain
   //Declare Subsystem variables
+  private Swerve swerveSubsystem;
   private Intake intakeSubsystem;
   private Shooter shooterSubsystem;
   private Arm armSubsystem;
@@ -84,6 +84,7 @@ public class RobotContainer {
   //Initialize subsystems
   private void createSubsystems() {
     //driveTrainSubsystem = SubsystemFactory.createDriveTrain(identity);
+    swerveSubsystem = SubsystemFactory.createSwerve(identity);
     climberSubsystem = SubsystemFactory.createClimber(identity);
     intakeSubsystem = SubsystemFactory.createIntake(identity);
     shooterSubsystem = SubsystemFactory.createShooter(identity);
@@ -192,9 +193,8 @@ public class RobotContainer {
     //autoAmpRed.addCommands(new InstantCommand(() -> driveTrainSubsystem.drive(0.0, 0.0), driveTrainSubsystem));
 
   }
-
-  private void configureButtonBindings() {
-
+  //We need to add button bindings for the drivetrain
+  private void configureButtonBindings(){
     driveController.leftBumper().onTrue(shootRing);
     driveController.a().onTrue(intakeRing);
 

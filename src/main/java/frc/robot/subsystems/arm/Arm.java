@@ -8,15 +8,17 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Arm extends SubsystemBase {
 
   private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
+  //Create interface for arm variables
   private ArmIO io;
 
-  private double ARM_MAX_ANGLE = Units.degreesToRadians(283)  ;
-  private double ARM_MIN_ANGLE = Units.degreesToRadians(35);
+  private double ARM_MAX_ANGLE = Units.degreesToRadians(Constants.ArmConstants.ArmMaxDegrees)  ;
+  private double ARM_MIN_ANGLE = Units.degreesToRadians(Constants.ArmConstants.ArmMinDegrees);
 
   public Arm(ArmIO io) {
     this.io = io;

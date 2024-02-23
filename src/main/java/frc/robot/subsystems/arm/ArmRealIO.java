@@ -7,10 +7,11 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel;
 import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants;
 
 /** Add your docs here. */
 public class ArmRealIO implements ArmIO {
-
+        //Declare variable for whether motor(s) is in break mode
         boolean isBrake;
         double targetAngle;
 
@@ -37,6 +38,8 @@ public class ArmRealIO implements ArmIO {
 
             //PID constant settings
             armPIDController = new PIDController(0.4,0.0,0.00001);
+            //Keep the arm from trying to go through/under the superstructure to get from one position to another
+            armPIDController.disableContinuousInput();
 
             //Set the left motor to follow the right motors movements, but inverted
             armMotor_l.follow(armMotor_r, true);
@@ -45,19 +48,22 @@ public class ArmRealIO implements ArmIO {
             cancoder = new CANcoder(0); //Need to input proper device ID here
             //Configure cancoder settings
             CANcoderConfiguration CANconfig = new CANcoderConfiguration();
+            //The sensor coefficient setting converts this to degrees by default
             CANconfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+            //We may need to put a magnet offset here to get the sensor to be zero where we want
+            //We may neet to invert the magnet sensor direction (like in CTREConfigs.java)
             cancoder.getConfigurator().apply(CANconfig);
         
             //Set current limit for arm motors
-            armMotor_r.setSmartCurrentLimit(80);
-            armMotor_l.setSmartCurrentLimit(80);
+            armMotor_r.setSmartCurrentLimit(Constants.ArmConstants.SmartCurrentLimit);
+            armMotor_l.setSmartCurrentLimit(Constants.ArmConstants.SmartCurrentLimit);
         }
 
 
         public void updateInputs(ArmIOInputs inputs) {
             inputs.isBrake = isBrake;
             inputs.current = armMotor_r.getOutputCurrent()+ armMotor_l.getOutputCurrent();
-            inputs.currentAngle = cancoder.getAbsolutePosition().getValueAsDouble(); //or should this be getPosition()?
+            inputs.currentAngle = cancoder.getAbsolutePosition().getValueAsDouble(); 
             inputs.velocity = cancoder.getVelocity().getValueAsDouble();
             inputs.targetAngle = targetAngle;
             inputs.appliedPower = armMotor_r.getAppliedOutput();
@@ -65,7 +71,7 @@ public class ArmRealIO implements ArmIO {
             inputs.relativePos_r = armMotor_r.getEncoder().getPosition();
         }
         
-        //Method to change idle mode 
+        //Method to change idle mode between brake and coast
         public void setBreakMode(boolean isBrake) {
             this.isBrake = isBrake;
             if (isBrake) {
@@ -76,9 +82,10 @@ public class ArmRealIO implements ArmIO {
         }
 
         //Set the target angle and move the motor towards the angle
+        //might need to add feedforward to accound for gravity?
         public void setAngle(double angle) {
             targetAngle = angle;
-            armMotor_r.set(armPIDController.calculate(cancoder.getAbsolutePosition().getValueAsDouble(), targetAngle)); //or should this be getPosition()?
+            armMotor_r.set(armPIDController.calculate(cancoder.getAbsolutePosition().getValueAsDouble(), targetAngle)); 
         }
 
 }

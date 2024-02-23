@@ -3,6 +3,7 @@ package frc.robot.utility;
 import static frc.robot.Constants.*;
 
 import frc.robot.Camera;
+import frc.robot.subsystems.drivetrain.Swerve;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeRealIO;
 import frc.robot.subsystems.intake.IntakeSimIO;
@@ -32,6 +33,19 @@ public final class SubsystemFactory {
         }
     }
     */
+
+    public static Swerve createSwerve(RobotIdentity identity) {
+        switch (identity) {
+            case SIMULATION:
+                return null;
+            case ROBOT_2024:
+                return new Swerve();
+            default:
+                System.out.println("Not Valid Robot Identity");
+                return null;
+
+        }
+    }
 
     public static Intake createIntake(RobotIdentity identity) {
         switch (identity) {
