@@ -3,6 +3,7 @@ package frc.robot.subsystems.arm;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel;
 import edu.wpi.first.math.controller.PIDController;
@@ -37,13 +38,14 @@ public class ArmRealIO implements ArmIO {
             //PID constant settings
             armPIDController = new PIDController(0.4,0.0,0.00001);
 
-            //Set the left motor to follow the right motors movements
+            //Set the left motor to follow the right motors movements, but inverted
             armMotor_l.follow(armMotor_r, true);
 
             //Initialize arm cancoder
             cancoder = new CANcoder(0); //Need to input proper device ID here
-            //Configure cancoder to default settings
+            //Configure cancoder settings
             CANcoderConfiguration CANconfig = new CANcoderConfiguration();
+            CANconfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
             cancoder.getConfigurator().apply(CANconfig);
         
             //Set current limit for arm motors

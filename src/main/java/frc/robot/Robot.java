@@ -8,9 +8,8 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.utility.AdvantageKitHelper;
 import frc.robot.lib.config.CTREConfigs;
-
+import frc.robot.utility.AdvantageKitHelper;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,9 +21,10 @@ import frc.robot.lib.config.CTREConfigs;
  * project.
  */
 public class Robot extends LoggedRobot {
-  public static CTREConfigs ctreConfigs;
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
+
+  public static CTREConfigs ctreConfigs;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -37,6 +37,7 @@ public class Robot extends LoggedRobot {
     Logger.start();
     
     m_robotContainer = new RobotContainer();
+
 
   }
 
@@ -77,7 +78,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_robotContainer.resetSubSystems();
+    m_robotContainer.resetSubSystems(); //turns off shooter
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -110,7 +111,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
-    m_robotContainer.resetSubSystems();
+    m_robotContainer.resetSubSystems(); //turns off shooters
     CommandScheduler.getInstance().cancelAll();
   }
 

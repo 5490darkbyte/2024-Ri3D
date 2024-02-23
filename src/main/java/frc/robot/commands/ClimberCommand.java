@@ -11,7 +11,6 @@ import frc.robot.utility.Joystick;
 
 
 public class ClimberCommand extends Command {
-  /** Creates a new DriveCommand. */
   private final Climber climberSubsystem;
   private final Arm armSubsystem;
 
@@ -55,4 +54,5 @@ public class ClimberCommand extends Command {
   public boolean isFinished() {
     return cancel.getAsBoolean();
   }
+
 }

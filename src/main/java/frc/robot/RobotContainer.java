@@ -37,7 +37,7 @@ public class RobotContainer {
   private final CommandXboxController testController = new CommandXboxController(TEST_CONTROLLER_PORT);
 
   //public DriveTrain driveTrainSubsystem;
-   private final Swerve s_Swerve = new Swerve();
+  private final Swerve s_Swerve = new Swerve(); //Create swerve drivetrain
   private Intake intakeSubsystem;
   private Shooter shooterSubsystem;
   private Arm armSubsystem;
@@ -50,7 +50,6 @@ public class RobotContainer {
 
   //public DriveCommand defaultDriveCommand;
   //public TurboDriveCommand turboDriveCommand;
-
   private SequentialCommandGroup shootRing;
   private SequentialCommandGroup intakeRing;
   private SequentialCommandGroup hiIntake;
@@ -72,7 +71,7 @@ public class RobotContainer {
   public RobotContainer() {
     identity = RobotIdentity.getIdentity();
 
-    createSubsystems(); // Create our subsystems.
+    createSubsystems(); // Create our subsystems
     createCommands(); // Create our commands
     configureButtonBindings(); // Configure the button bindings
     createAutoCommand();
@@ -92,10 +91,7 @@ public class RobotContainer {
     defaultDriveCommand = new DriveCommand(driveTrainSubsystem,
         () -> driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis(),
         () -> -driveController.getLeftX());
-        */
-    shootRing = new SequentialCommandGroup();  
 
-    /* 
     turboDriveCommand = new TurboDriveCommand(driveTrainSubsystem,
         () -> driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis(),
         () -> -driveController.getLeftX());
@@ -103,7 +99,7 @@ public class RobotContainer {
     driveTrainSubsystem.setDefaultCommand(defaultDriveCommand);
     */
 
-    
+    shootRing = new SequentialCommandGroup();  
     //shootRing.addCommands(new InstantCommand(() -> driveTrainSubsystem.setLowCurrentMode()));
     shootRing.addCommands(new InstantCommand(() -> armSubsystem.setPosition("SHOOT")));
     shootRing.addCommands(new InstantCommand(() -> shooterSubsystem.setPID(Units.rotationsPerMinuteToRadiansPerSecond(4500.0))));
@@ -113,43 +109,36 @@ public class RobotContainer {
     shootRing.addCommands(new StopShooterCommand(shooterSubsystem));
 
     intakeRing = new SequentialCommandGroup();
-
     intakeRing.addCommands(new InstantCommand(() -> armSubsystem.setPosition("INTAKE")));
     intakeRing.addCommands(new IntakeCommand(intakeSubsystem, () -> driveController.b().getAsBoolean(), 0.8));
     intakeRing.addCommands(new InstantCommand(() -> armSubsystem.setPosition("SHOOT")));
 
     hiIntake = new SequentialCommandGroup();
-
     hiIntake.addCommands(new InstantCommand(() -> armSubsystem.setPosition("HI_INTAKE")));
     hiIntake.addCommands(new IntakeCommand(intakeSubsystem, () -> driveController.b().getAsBoolean(), 0.4));
     hiIntake.addCommands(new InstantCommand(() -> armSubsystem.setPosition("SHOOT")));
 
     feederPlace = new SequentialCommandGroup();
-
     feederPlace.addCommands(new InstantCommand(() -> armSubsystem.setPosition("AMP")));
     feederPlace.addCommands(new WaitCommand(1));
     feederPlace.addCommands(new UnloadCommand(intakeSubsystem, () -> driveController.b().getAsBoolean()));
     feederPlace.addCommands(new InstantCommand(() -> armSubsystem.setPosition("SHOOT")));
 
     climber = new SequentialCommandGroup();
-
     climber.addCommands(new InstantCommand(() -> armSubsystem.setPosition("CLIMB")));
     climber.addCommands(new ClimberCommand(climberSubsystem, () -> driveController.getRightY(), armSubsystem,() -> driveController.b().getAsBoolean()));
 
     feedBack = new SequentialCommandGroup();
     feedBack.addCommands(new InstantCommand(() -> intakeSubsystem.setPower(-.2)));
-    feedBack.addCommands(new WaitCommand(0.025
-    ));
+    feedBack.addCommands(new WaitCommand(0.025));
     feedBack.addCommands(new InstantCommand(() -> intakeSubsystem.setPower(0.0)));
 
     feedForward = new SequentialCommandGroup();
     feedForward.addCommands(new InstantCommand(() -> intakeSubsystem.setPower(0.2)));
-    feedForward.addCommands(new WaitCommand(0.025
-    ));
+    feedForward.addCommands(new WaitCommand(0.025));
     feedForward.addCommands(new InstantCommand(() -> intakeSubsystem.setPower(0.0)));
 
     shootRingAuto1 = new SequentialCommandGroup();
-
     shootRingAuto1.addCommands(new InstantCommand(() -> armSubsystem.setPosition("SHOOT")));
     shootRingAuto1.addCommands(new InstantCommand(() -> shooterSubsystem.setPID(Units.rotationsPerMinuteToRadiansPerSecond(4500.0))));
     shootRingAuto1.addCommands(new WaitCommand(1.5));
@@ -157,7 +146,6 @@ public class RobotContainer {
     shootRingAuto1.addCommands(new StopShooterCommand(shooterSubsystem));
 
     shootRingAuto2 = new SequentialCommandGroup();
-
     shootRingAuto2.addCommands(new InstantCommand(() -> armSubsystem.setPosition("SHOOT")));
     shootRingAuto2.addCommands(new InstantCommand(() -> shooterSubsystem.setPID(Units.rotationsPerMinuteToRadiansPerSecond(4500.0))));
     shootRingAuto2.addCommands(new WaitCommand(1.5));
@@ -165,7 +153,6 @@ public class RobotContainer {
     shootRingAuto2.addCommands(new StopShooterCommand(shooterSubsystem));
 
     shootRingAuto3 = new SequentialCommandGroup();
-
     shootRingAuto3.addCommands(new InstantCommand(() -> armSubsystem.setPosition("SHOOT")));
     shootRingAuto3.addCommands(new InstantCommand(() -> shooterSubsystem.setPID(Units.rotationsPerMinuteToRadiansPerSecond(4500.0))));
     shootRingAuto3.addCommands(new WaitCommand(1.5));
@@ -173,7 +160,6 @@ public class RobotContainer {
     shootRingAuto3.addCommands(new StopShooterCommand(shooterSubsystem));
     
     autoShootDrive = new SequentialCommandGroup();
-
     autoShootDrive.addCommands(shootRingAuto1);
     //autoShootDrive.addCommands(new InstantCommand(() -> driveTrainSubsystem.drive(0.25, 0.25), driveTrainSubsystem));
     autoShootDrive.addCommands(new WaitCommand(2));
@@ -214,7 +200,6 @@ public class RobotContainer {
     operatorController.povUp().onTrue(feedForward);
 
     //driveController.rightBumper().whileTrue(turboDriveCommand);
-
     driveController.povLeft().onTrue(new InstantCommand(() -> armSubsystem.setPosition("LATCH")));
     driveController.povUp().onTrue(new InstantCommand(() -> armSubsystem.setPosition("LATCHSTANDBY")));
     driveController.povDown().onTrue(new InstantCommand(() -> armSubsystem.setPosition("SHOOT")));
