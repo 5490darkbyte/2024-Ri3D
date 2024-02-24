@@ -8,6 +8,7 @@ import frc.robot.commands.UnloadCommand;
 import frc.robot.commands.WaitCommandWithExit;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.StopShooterCommand;
+import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.utility.AutoCommandChooser;
@@ -53,6 +54,8 @@ public class RobotContainer {
   //Declare sequential command groups
   //public DriveCommand defaultDriveCommand;
   //public TurboDriveCommand turboDriveCommand;
+  public TeleopSwerve defaultDriveCommand;
+  public TeleopSwerve turboDriveCommand;
   private SequentialCommandGroup shootRing;
   private SequentialCommandGroup intakeRing;
   private SequentialCommandGroup hiIntake;
@@ -105,6 +108,21 @@ public class RobotContainer {
 
     driveTrainSubsystem.setDefaultCommand(defaultDriveCommand);
     */
+
+    defaultDriveCommand = new TeleopSwerve(swerveSubsystem, 
+        () -> driveController.getLeftY(), 
+        () -> driveController.getLeftX(),
+        () -> driveController.getRightX(),
+        () -> driveController.rightBumper().getAsBoolean(),
+        3.7, 1.0, 1.0);
+
+        turboDriveCommand = new TeleopSwerve(swerveSubsystem, 
+        () -> driveController.getLeftY(), 
+        () -> driveController.getLeftX(),
+        () -> driveController.getRightX(),
+        () -> driveController.rightBumper().getAsBoolean(),
+        3.7, 1.0, 1.0);
+
 
     shootRing = new SequentialCommandGroup();  
     //shootRing.addCommands(new InstantCommand(() -> driveTrainSubsystem.setLowCurrentMode()));
