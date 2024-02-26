@@ -27,18 +27,14 @@ public final class Constants {
     public static final int DRIVE_CONTROLLER_PORT = 0;
     public static final int OPERATOR_CONTROLLER_PORT = 1;
     public static final int TEST_CONTROLLER_PORT = 2;
-
+   
+    //PDP CAN ID
     public static final int PDP_CAN_ID = 0;
 
-    // Sensors
+    // Sensors?
     public static final int INTAKE_BEAM_BREAK = 0;
 
-    // Drive Motors
-    public static final int LEFT_FRONT_MOTOR = 4;
-    public static final int LEFT_BACK_MOTOR = 1;
-    public static final int RIGHT_FRONT_MOTOR = 2;
-    public static final int RIGHT_BACK_MOTOR = 3;
-
+    //Motor CAN IDs
     public static final int CLIMBER_WENCH_MOTOR = 6;
 
     public static final int INTAKE_MOTOR = 5;
@@ -49,6 +45,7 @@ public final class Constants {
     public static final int SHOOTER_LEFT = 10;
     public static final int SHOOTER_RIGHT = 11;
 
+    //Arm CANcoder Offset
     public static final double ARM_Offset = Units.degreesToRadians(319.0 - 180.0);
 
     // Radios
@@ -110,9 +107,8 @@ public final class Constants {
         public static final double driveKV = 2.44;
         public static final double driveKA = 0.27;
         
-            /* Drive Motor Conversion Factors */
-        public static final double driveConversionPositionFactor =
-            (wheelDiameter * Math.PI) / driveGearRatio;
+        /* Drive Motor Conversion Factors */
+        public static final double driveConversionPositionFactor = (wheelDiameter * Math.PI) / driveGearRatio;
         public static final double driveConversionVelocityFactor = driveConversionPositionFactor / 60.0;
         public static final double angleConversionFactor = 360.0 / angleGearRatio;
 

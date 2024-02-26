@@ -21,9 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-
 import static frc.robot.Constants.*;
-
 import java.security.PublicKey;
 
 @SuppressWarnings("unused")
@@ -37,7 +35,6 @@ public class RobotContainer {
   @SuppressWarnings({ "unused" })
   private final CommandXboxController testController = new CommandXboxController(TEST_CONTROLLER_PORT);
 
-  //public DriveTrain driveTrainSubsystem;
   //Declare Subsystem variables
   private Swerve swerveSubsystem;
   private Intake intakeSubsystem;
@@ -69,10 +66,10 @@ public class RobotContainer {
   private SequentialCommandGroup autoAmpRed;
   private SequentialCommandGroup feedBack;
   private SequentialCommandGroup feedForward;
-  
-  
+     
   //Declare robot identity
   private RobotIdentity identity;
+
 
   public RobotContainer() {
     //Initialize robot identity (real or simulation)
@@ -84,9 +81,9 @@ public class RobotContainer {
     createAutoCommand(); //Register autonomous commands and put the chooser in shuffleboard
   }
 
+
   //Initialize subsystems
   private void createSubsystems() {
-    //driveTrainSubsystem = SubsystemFactory.createDriveTrain(identity);
     swerveSubsystem = SubsystemFactory.createSwerve(identity);
     climberSubsystem = SubsystemFactory.createClimber(identity);
     intakeSubsystem = SubsystemFactory.createIntake(identity);
@@ -94,6 +91,7 @@ public class RobotContainer {
     armSubsystem = SubsystemFactory.createArm(identity);
     camera = SubsystemFactory.createCamera(identity);
   }
+
 
   // Initialize Command groups and add commands to them
   private void createCommands() {
@@ -116,7 +114,7 @@ public class RobotContainer {
         () -> driveController.rightBumper().getAsBoolean(),
         3.7, 1.0, 1.0);
 
-        turboDriveCommand = new TeleopSwerve(swerveSubsystem, 
+    turboDriveCommand = new TeleopSwerve(swerveSubsystem, 
         () -> driveController.getLeftY(), 
         () -> driveController.getLeftX(),
         () -> driveController.getRightX(),
@@ -130,7 +128,7 @@ public class RobotContainer {
     shootRing.addCommands(new InstantCommand(() -> shooterSubsystem.setPID(Units.rotationsPerMinuteToRadiansPerSecond(4500.0))));
     shootRing.addCommands(new WaitCommandWithExit(1.5, () -> driveController.b().getAsBoolean()));
     shootRing.addCommands(new UnloadCommand(intakeSubsystem, () -> driveController.b().getAsBoolean()));
-   //shootRing.addCommands(new InstantCommand(() -> driveTrainSubsystem.setHighCurrentMode()));
+    //shootRing.addCommands(new InstantCommand(() -> driveTrainSubsystem.setHighCurrentMode()));
     shootRing.addCommands(new StopShooterCommand(shooterSubsystem));
 
     intakeRing = new SequentialCommandGroup();
@@ -211,6 +209,8 @@ public class RobotContainer {
     //autoAmpRed.addCommands(new InstantCommand(() -> driveTrainSubsystem.drive(0.0, 0.0), driveTrainSubsystem));
 
   }
+
+
   //We need to add button bindings for the drivetrain
   private void configureButtonBindings(){
     driveController.leftBumper().onTrue(shootRing);
@@ -230,6 +230,8 @@ public class RobotContainer {
     driveController.povRight().onTrue(new InstantCommand(() -> armSubsystem.setPosition("LATCHAPROCH")));
   }
 
+
+
   //Register autonomous commands and put the chooser in shuffleboard
   private void createAutoCommand(){
     autoChooser = new AutoCommandChooser();
@@ -243,14 +245,19 @@ public class RobotContainer {
     // Setup the chooser in shuffleboard
     autoChooser.setup("Auto", 0, 0, 3, 1);
 
-  }
+    }
 
-  public Command getAutonomousCommand() {
-    return autoChooser.getAutonomousCommand();
-  }
 
-  public void resetSubSystems(){
-    shooterSubsystem.setPowers(0, 0);
 
-  }
+    public Command getAutonomousCommand() {
+      return autoChooser.getAutonomousCommand();
+    }
+
+
+
+    public void resetSubSystems(){
+      //Turn off shooter motors
+      shooterSubsystem.setPowers(0);
+
+    }
 }

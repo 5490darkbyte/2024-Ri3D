@@ -13,7 +13,8 @@ public class FeederCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        shooter.setPowers(6, 0);
+        //this was originally 6 for left and 0 for right?
+        shooter.setPowers(0);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -24,7 +25,8 @@ public class FeederCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        shooter.setPowers(6, 0);
+        //this was originally 6 for left and 0 for right?
+        shooter.setPowers(0);
     }
 
     // Returns true when the command should end.

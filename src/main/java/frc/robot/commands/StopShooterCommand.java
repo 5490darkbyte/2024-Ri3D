@@ -11,7 +11,7 @@ public class StopShooterCommand extends Command {
   public StopShooterCommand(Shooter shooter) {
     addRequirements(shooter);
     System.out.print("Constructed Stop Shooter");
-    shooter.setPowers(0, 0);
+    shooter.setPowers(0);
 
     this.shooter = shooter;
   }
@@ -19,7 +19,7 @@ public class StopShooterCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooter.setPowers(0, 0);
+    shooter.setPowers(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -15,10 +15,8 @@ public class ShooterRealIO implements ShooterIO {
 
     private CANSparkMax leftMotor;
     private CANSparkMax rightMotor;
-    private SparkPIDController leftPIDController;
     private SparkPIDController rightPIDController;
 
-    private RelativeEncoder leftMotorEncoder;
     private RelativeEncoder rightMotorEncoder;
 
     private double p = 0.0009;
@@ -31,62 +29,46 @@ public class ShooterRealIO implements ShooterIO {
         leftMotor = new CANSparkMax(IDleftMotor, MotorType.kBrushless);
         rightMotor = new CANSparkMax(IDrightMotor, MotorType.kBrushless);
 
-        leftPIDController = leftMotor.getPIDController();
         rightPIDController = rightMotor.getPIDController();
-
-        leftMotorEncoder = leftMotor.getEncoder();
         rightMotorEncoder = rightMotor.getEncoder();
 
         leftMotor.setInverted(false);
         rightMotor.setInverted(true);
 
-        leftPIDController.setOutputRange(-1,1);
         rightPIDController.setOutputRange(-1, 1);
 
         leftMotor.setSmartCurrentLimit(80);
         rightMotor.setSmartCurrentLimit(80);
 
-        leftMotorEncoder.setVelocityConversionFactor(SHOOTER_RADIO*2*Math.PI/60);
         rightMotorEncoder.setVelocityConversionFactor(SHOOTER_RADIO*2*Math.PI/60);
-
-        leftMotorEncoder.setPositionConversionFactor(SHOOTER_RADIO*2*Math.PI);
         rightMotorEncoder.setPositionConversionFactor(SHOOTER_RADIO*2*Math.PI);
 
-        leftPIDController.setP(p);
-        leftPIDController.setI(i);
-        leftPIDController.setD(d);
         rightPIDController.setP(p);
         rightPIDController.setI(i);
         rightPIDController.setD(d);
 
-        leftPIDController.setFeedbackDevice(leftMotorEncoder);
         rightPIDController.setFeedbackDevice(rightMotorEncoder);
 
         leftMotor.setIdleMode(IdleMode.kCoast);
         rightMotor.setIdleMode(IdleMode.kCoast);
+
+        leftMotor.follow(rightMotor);
     }
 
     public void updateInputs(ShooterIOInputs inputs) {
-        inputs.leftCurent = leftMotor.getOutputCurrent();
         inputs.rightCurent = rightMotor.getOutputCurrent();
-        inputs.leftVelocity = leftMotorEncoder.getVelocity();
         inputs.rightVelocity = rightMotorEncoder.getVelocity();
-        inputs.leftPosition = leftMotorEncoder.getPosition();
         inputs.rightPosition = rightMotorEncoder.getPosition();
-        inputs.leftAppliedPower = leftMotor.getAppliedOutput();
         inputs.rightApppliedPower = rightMotor.getAppliedOutput();
         inputs.setPoint = setPoint;
     }
 
-    public void setPowers(double leftPower, double rightPower) {
-        leftMotor.set(leftPower);
+    public void setPowers(double rightPower) {
         rightMotor.set(rightPower);
     }
 
-    public void setRPS(double leftRPS, double rightRPS) {
-        leftPIDController.setReference(leftRPS, ControlType.kVelocity);
+    public void setRPS(double rightRPS) {
         rightPIDController.setReference(rightRPS, ControlType.kVelocity);
-
-        this.setPoint = leftRPS;
+        this.setPoint = rightRPS;
     }
 }

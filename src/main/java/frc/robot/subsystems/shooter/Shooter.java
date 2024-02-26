@@ -3,14 +3,13 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems.shooter;
-
 import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
   
+  //io will vary depending on identity (real robot vs. simulation)
   private ShooterIO io;
 
   public Shooter(ShooterIO io) {
@@ -31,16 +30,15 @@ public class Shooter extends SubsystemBase {
     }
   }
 
-  public void setPowers(double leftPower, double rightPower) {
+  public void setPowers(double rightPower) {
 
-    io.setPowers(leftPower, rightPower);
+    io.setPowers(rightPower);
 
     Logger.recordOutput("Shooter/RightPower", rightPower);
-    Logger.recordOutput("Shooter/LeftPower", leftPower);
   }
 
   public void setPID(double speed){
-    io.setRPS(speed, speed);
+    io.setRPS(speed);
   }
 
   public double getLRPS() {

@@ -25,7 +25,7 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
   //Declare robot container variable
   private RobotContainer m_robotContainer;
-  //Declare STREConfige variable
+  //Declare CTREConfig variable
   public static CTREConfigs ctreConfigs;
 
   /**
