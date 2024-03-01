@@ -44,7 +44,7 @@ public class RobotContainer {
   //Declare autochooser for selecting autonomous code
   private AutoCommandChooser autoChooser;
 
-  //Declasre camera variable
+  //Declare camera variable
   @SuppressWarnings("unused")
   private Camera camera;
 
@@ -75,10 +75,10 @@ public class RobotContainer {
     //Initialize robot identity (real or simulation)
     identity = RobotIdentity.getIdentity();
 
-    createSubsystems(); // Initialize subsystems
+    createSubsystems(); // Initialize all the subsystems
     createCommands(); // Initialize Command groups and add commands to them
     configureButtonBindings(); // Configure the button bindings
-    createAutoCommand(); //Register autonomous commands and put the chooser in shuffleboard
+    createAutoCommand(); //R egister autonomous commands and put the chooser in shuffleboard
   }
 
 
@@ -112,14 +112,14 @@ public class RobotContainer {
         () -> driveController.getLeftX(),
         () -> driveController.getRightX(),
         () -> driveController.rightBumper().getAsBoolean(),
-        3.7, 1.0, 1.0);
+        Constants.SwerveConstants.defaultMaxSpeed, 1.0, 1.0);
 
     turboDriveCommand = new TeleopSwerve(swerveSubsystem, 
         () -> driveController.getLeftY(), 
         () -> driveController.getLeftX(),
         () -> driveController.getRightX(),
         () -> driveController.rightBumper().getAsBoolean(),
-        3.7, 1.0, 1.0);
+        Constants.SwerveConstants.turboMaxSpeed, 1.0, 1.0);
 
 
     shootRing = new SequentialCommandGroup();  

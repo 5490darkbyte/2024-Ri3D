@@ -124,6 +124,10 @@ public final class Constants {
         public static final boolean driveInvert = true;
         public static final boolean angleInvert = false;
 
+        /* Max Speeds */
+        public static final double defaultMaxSpeed = 3.7;
+        public static final double turboMaxSpeed = 3.7;
+
         /* Angle Encoder Invert */
         public static final SensorDirectionValue canCoderInvert = SensorDirectionValue.CounterClockwise_Positive;
 

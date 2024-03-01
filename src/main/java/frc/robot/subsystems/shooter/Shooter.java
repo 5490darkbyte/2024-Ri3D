@@ -18,6 +18,7 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+    //Consistenlty update valuues from shooter motors controller and encoder
     io.updateInputs(inputs);
 
     Logger.processInputs("Shooter", inputs);
@@ -31,7 +32,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setPowers(double rightPower) {
-
+    //Run the shooter motors at a certain power
     io.setPowers(rightPower);
 
     Logger.recordOutput("Shooter/RightPower", rightPower);
