@@ -34,7 +34,7 @@ public class SwerveModule {
   private final SparkPIDController driveController;
   private final SparkPIDController angleController;
 
-   //Declare CTRE CANcoder Configuration
+  //Create the CTRE CANcoder Configuration
   public final  CTREConfigs CANConfiguration = new CTREConfigs();
 
   public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {

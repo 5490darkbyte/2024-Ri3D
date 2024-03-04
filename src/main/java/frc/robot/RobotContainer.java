@@ -18,6 +18,7 @@ import frc.robot.utility.SubsystemFactory;
 import frc.robot.Camera;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -115,6 +116,8 @@ public class RobotContainer {
         () -> driveController.getRightX(),
         () -> driveController.rightBumper().getAsBoolean(),
         Constants.SwerveConstants.defaultMaxSpeed, 1.0, 1.0);
+
+    swerveSubsystem.setDefaultCommand(defaultDriveCommand);
 
     turboDriveCommand = new TeleopSwerve(swerveSubsystem, 
         () -> driveController.getLeftY(), 
@@ -230,6 +233,8 @@ public class RobotContainer {
     driveController.povUp().onTrue(new InstantCommand(() -> armSubsystem.setPosition("LATCHSTANDBY")));
     driveController.povDown().onTrue(new InstantCommand(() -> armSubsystem.setPosition("SHOOT")));
     driveController.povRight().onTrue(new InstantCommand(() -> armSubsystem.setPosition("LATCHAPROCH")));
+
+    driveController.leftStick().whileTrue(defaultDriveCommand);
   }
 
 
