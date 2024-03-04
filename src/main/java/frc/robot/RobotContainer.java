@@ -6,6 +6,7 @@ import frc.robot.subsystems.drivetrain.Swerve;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.UnloadCommand;
 import frc.robot.commands.WaitCommandWithExit;
+import frc.robot.lib.config.CTREConfigs;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.StopShooterCommand;
 import frc.robot.commands.TeleopSwerve;
@@ -40,7 +41,8 @@ public class RobotContainer {
   private Intake intakeSubsystem;
   private Shooter shooterSubsystem;
   private Arm armSubsystem;
-  private Climber climberSubsystem;
+  private Climber climberSubsystemL;
+  private Climber climberSubsystemR;
   //Declare autochooser for selecting autonomous code
   private AutoCommandChooser autoChooser;
 
@@ -70,7 +72,6 @@ public class RobotContainer {
   //Declare robot identity
   private RobotIdentity identity;
 
-
   public RobotContainer() {
     //Initialize robot identity (real or simulation)
     identity = RobotIdentity.getIdentity();
@@ -78,14 +79,15 @@ public class RobotContainer {
     createSubsystems(); // Initialize all the subsystems
     createCommands(); // Initialize Command groups and add commands to them
     configureButtonBindings(); // Configure the button bindings
-    createAutoCommand(); //R egister autonomous commands and put the chooser in shuffleboard
+    createAutoCommand(); //Register autonomous commands and put the chooser in shuffleboard
   }
 
 
   //Initialize subsystems
   private void createSubsystems() {
     swerveSubsystem = SubsystemFactory.createSwerve(identity);
-    climberSubsystem = SubsystemFactory.createClimber(identity);
+    climberSubsystemL = SubsystemFactory.createClimber(identity, Constants.ARM_MOTOR_LEFT);
+    climberSubsystemR = SubsystemFactory.createClimber(identity, Constants.ARM_MOTOR_RIGHT);
     intakeSubsystem = SubsystemFactory.createIntake(identity);
     shooterSubsystem = SubsystemFactory.createShooter(identity);
     armSubsystem = SubsystemFactory.createArm(identity);
@@ -149,7 +151,7 @@ public class RobotContainer {
 
     climber = new SequentialCommandGroup();
     climber.addCommands(new InstantCommand(() -> armSubsystem.setPosition("CLIMB")));
-    climber.addCommands(new ClimberCommand(climberSubsystem, () -> driveController.getRightY(), armSubsystem,() -> driveController.b().getAsBoolean()));
+    climber.addCommands(new ClimberCommand(climberSubsystemL, () -> driveController.getRightY(), armSubsystem,() -> driveController.b().getAsBoolean()));
 
     feedBack = new SequentialCommandGroup();
     feedBack.addCommands(new InstantCommand(() -> intakeSubsystem.setPower(-.2)));

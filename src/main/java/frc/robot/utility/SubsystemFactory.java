@@ -75,12 +75,12 @@ public final class SubsystemFactory {
         }
     }
 
-    public static Climber createClimber(RobotIdentity identity) {
+    public static Climber createClimber(RobotIdentity identity, int climberID) {
         switch (identity) {
             case SIMULATION:
                 return new Climber(new ClimberSimIO());
             case ROBOT_2024:
-                return new Climber(new ClimberRealIO(CLIMBER_WENCH_MOTOR));
+                return new Climber(new ClimberRealIO(climberID));
             default:
                 System.out.println("Not Valid Robot Identity");
                 return new Climber(new ClimberSimIO());

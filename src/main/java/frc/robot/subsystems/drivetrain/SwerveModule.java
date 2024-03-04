@@ -16,8 +16,8 @@ import frc.robot.lib.util.CANCoderUtil;
 import frc.robot.lib.util.CANCoderUtil.CCUsage;
 import frc.robot.lib.util.CANSparkMaxUtil;
 import frc.robot.lib.util.CANSparkMaxUtil.Usage;
+import frc.robot.lib.config.CTREConfigs;
 import frc.robot.Constants;
-import frc.robot.Robot;
 
 public class SwerveModule {
   public int moduleNumber;
@@ -33,6 +33,9 @@ public class SwerveModule {
 
   private final SparkPIDController driveController;
   private final SparkPIDController angleController;
+
+   //Declare CTRE CANcoder Configuration
+  public final  CTREConfigs CANConfiguration = new CTREConfigs();
 
   public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
     this.moduleNumber = moduleNumber;
@@ -55,6 +58,7 @@ public class SwerveModule {
     configDriveMotor();
 
     lastAngle = getState().angle;
+
   }
 
   public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
@@ -74,7 +78,7 @@ public class SwerveModule {
   private void configAngleEncoder() {
     angleEncoder.getConfigurator().apply(new CANcoderConfiguration());
     CANCoderUtil.setCANCoderBusUsage(angleEncoder, CCUsage.kMinimal);
-    angleEncoder.getConfigurator().apply(Robot.ctreConfigs.swerveCANcoderConfiguration, 10);
+    angleEncoder.getConfigurator().apply(CANConfiguration.swerveCANcoderConfiguration, 10);
   }
 
   private void configAngleMotor() {
